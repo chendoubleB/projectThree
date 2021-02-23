@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+
+            margin: 0;
+            padding: 0;
+        }
+
+        #app {
+            width: 800px;
+            margin: 100px auto;
+        }
+
+        table {
+            width: 100%;
+            background-color: cornflowerblue;
+        }
+
+        table thead {
+            background-color: darkcyan;
+
+        }
+
+        table tbody {
+            background-color: darkcyan;
+
+        }
+    </style>
+    <script src="js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <table v-show="isShow">
+            <tr>
+                <th><input type="text" placeholder="请输入序号" v-model="person.id"></th>
+                <th><input type="text" placeholder="请输入姓名" v-model="person.name"></th>
+                <th><input type="text" placeholder="请输入分数" v-model="person.scope"></th>
+                <th>
+                    <a href="#" @click.pervent="add">添加</a>
+                    <a href="#" @click.pervent="more">取消</a>
+                    <a href="#" @click.pervent="query">查询</a>
+                </th>
+            </tr>
+        </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>姓名</th>
+                    <th>分数</th>
+                    <th>时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item, index) in students" :key="index">
+                    <th><input type="text" v-model="item.id" :disabled="isdisabled"></th>
+                    <th><input type="text" v-model="item.name" :disabled="isdisabled"></th>
+                    <th><input type="text" v-model="item.scope" :disabled="isdisabled"></th>
+                    <th><input type="text" :value="item.time | timeFormat" disabled></th>
+                    <th>
+                        <a href="#" @click.prevent="edit">编辑</a>
+                        <a href="#" @click.prevent="remove(index)">删除</a>
+                        <br>
+                        <a href="#" @click.prevent="more">更多操作</a>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        // 过滤器格式化时间
+        Vue.filter('timeFormat', function (value, str) {
+
+            let date = new Date(value);
+            // console.log(date);
+            let year = date.getFullYear() + "";
+            let month = date.getMonth() + 1 + "";
+            let day = date.getDate() + "";
+            let hour = date.getHours() + "";
+            let minute = date.getMinutes() + "";
+            let second = date.getSeconds() + "";
+
+            // 接收传递过来的参数
+            if (str && str === "yyyy-mm-dddd") {
+                return `${year.padStart(2 ,"0")}-${month.padStart(2 ,"0")}-${day.padStart(2 ,"0")}`;
+            }
+            return `${year.padStart(2 ,"0")}-${month.padStart(2 ,"0")}-${day.padStart(2 ,"0")} ${hour.padStart(2 ,"0")}:${minute.padStart(2 ,"0")}:${second.padStart(2 ,"0")}`;
+        });
+        // vue实例
+        let vm = new Vue({
+            el: "#app",
+            data: {
+                isShow: false,
+                isdisabled: true,
+                time: Date.now(),
+                students: [{
+                    id: 1,
+                    name: "陈彬彬",
+                    scope: "99",
+                    time: Date.now()
+                }, {
+                    id: 1,
+                    name: "七饼",
+                    scope: "88",
+                    time: Date.now()
+                }, {
+                    id: 1,
+                    name: "七七饼",
+                    scope: "88",
+                    time: Date.now()
+                }],
+                // 需要创建一个新数组给增加的数据存储
+                person: {
+                    id: "",
+                    name: "",
+                    scope: "",
+                }
+            },
+            methods: {
+                edit() {
+                    this.isdisabled = !this.isdisabled;
+
+                },
+                more() {
+                    this.isShow = !this.isShow;
+                },
+                add() {
+                    this.person.time = Date.now();
+                    this.students.push(this.person);
+                    this.person = {
+                        id: " ",
+                        name: " ",
+                        scope: " ",
+                    }
+                },
+                remove(index) {
+                    this.students.splice(index, 1);
+                },
+                // 查询操作
+                query() {
+                    let newPersons = this.students.filter((person) => {
+                        // console.log(person.scope, this.students.scope);
+                        // console.log(person.scope == this.students.scope);
+                        if (person.scope === this.students.scope) {
+                            return true;
+                        }
+                    })
+
+                },
+
+            },
+        })
+    </script>
+</body>
+
+</html>
